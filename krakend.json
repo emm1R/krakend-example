@@ -1,0 +1,49 @@
+{
+  "$schema": "https://www.krakend.io/schema/v2.6/krakend.json",
+  "version": 3,
+  "name": "Sensitive Data | API Gateway",
+  "timeout": "10000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "debug_endpoint": true,
+  "echo_endpoint": true,
+  "endpoints": [
+    {
+      "endpoint": "/allasheader/{container}",
+      "backend": [
+        {
+          "url_pattern": "/allasheader/{container}",
+          "host": [ "http://unused-mandatory-field" ],
+          "extra_config": {
+            "plugin/http-client": {
+              "name": "allas-header-client",
+              "allas-header-client": {
+                "s3_host": "",
+                "c4gh_private_key_path": "/opt/krakend/plugins/allas-header-client/allas-encryption.testkey",
+                "c4gh_private_key_passphrase": "yks234"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/profile",
+      "backend": [
+        {
+          "url_pattern": "/profile",
+          "host": [ "http://unused-mandatory-field" ],
+          "extra_config": {
+            "plugin/http-client": {
+              "name": "profile-client"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "plugin": {
+    "pattern": ".so",
+    "folder": "/opt/krakend/plugins/"
+  }
+}
