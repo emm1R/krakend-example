@@ -1,47 +1,34 @@
 {
-  "$schema": "https://www.krakend.io/schema/v2.6/krakend.json",
+  "$schema": "https://www.krakend.io/schema/v2.11/krakend.json",
   "version": 3,
-  "name": "Sensitive Data | API Gateway",
-  "timeout": "10000ms",
-  "cache_ttl": "300s",
-  "output_encoding": "json",
+  "port": 8082,
   "debug_endpoint": true,
   "echo_endpoint": true,
   "endpoints": [
     {
-      "endpoint": "/allasheader/{container}",
+      "endpoint": "/example",
+      "method": "GET",
       "backend": [
         {
-          "url_pattern": "/allasheader/{container}",
-          "host": [ "http://unused-mandatory-field" ],
+          "url_pattern": "/example",
+          "host": ["https://my.foo-api.com"],
           "extra_config": {
-            "plugin/http-client": {
-              "name": "allas-header-client",
-              "allas-header-client": {
-                "s3_host": "",
-                "c4gh_private_key_path": "/opt/krakend/plugins/allas-header-client/allas-encryption.testkey",
-                "c4gh_private_key_passphrase": "yks234"
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
-      "endpoint": "/profile",
-      "backend": [
-        {
-          "url_pattern": "/profile",
-          "host": [ "http://unused-mandatory-field" ],
-          "extra_config": {
-            "plugin/http-client": {
-              "name": "profile-client"
+            "plugin/middleware": {
+              "name": ["mw-example"]
+            },
+            "plugin/req-resp-modifier": {
+              "name": ["modifier-example"]
             }
           }
         }
       ]
     }
   ],
+  "extra_config": {
+    "router": {
+      "return_error_msg": true
+    }
+  },
   "plugin": {
     "pattern": ".so",
     "folder": "/opt/krakend/plugins/"
