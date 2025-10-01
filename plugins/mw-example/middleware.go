@@ -29,13 +29,46 @@ func (r registerer) RegisterMiddlewares(f func(
 ),
 ) {
 	f(string(r), r.middlewareFactory)
+
+	logger.Debug(fmt.Sprintf("[PLUGIN: %s] Middleware registered", r))
 }
 
 func (r registerer) middlewareFactory(_ map[string]any, next func(context.Context, any) (any, error)) func(context.Context, any) (any, error) {
 	logger.Debug(fmt.Sprintf("[PLUGIN: %s] Middleware injected", r))
 
 	return func(ctx context.Context, req any) (any, error) {
-		return nil, errors.New("Middleware error")
+		logger.Info("middleware success!")
+
+		reqw, ok := req.(RequestWrapper)
+		if !ok {
+			return nil, errUnkownRequestType
+		}
+
+		resp, err := next(ctx, requestWrapper{
+			params:  reqw.Params(),
+			headers: reqw.Headers(),
+			body:    reqw.Body(),
+			method:  reqw.Method(),
+			url:     reqw.URL(),
+			query:   reqw.Query(),
+			path:    reqw.Path(),
+		})
+		respw, ok := resp.(ResponseWrapper)
+		if !ok {
+			return nil, errUnkownResponseType
+		}
+
+		return responseWrapper{
+			ctx:        respw.Context(),
+			request:    respw.Request(),
+			data:       respw.Data(),
+			isComplete: respw.IsComplete(),
+			metadata: metadataWrapper{
+				headers:    respw.Headers(),
+				statusCode: respw.StatusCode(),
+			},
+			io: respw.Io(),
+		}, err
 	}
 }
 

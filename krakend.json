@@ -10,18 +10,38 @@
       "method": "GET",
       "backend": [
         {
-          "url_pattern": "/example",
-          "host": ["https://my.foo-api.com"],
+          "url_pattern": "/__workflow/example",
+          "host": ["http://localhost:8082"],
           "extra_config": {
             "plugin/middleware": {
               "name": ["mw-example"]
             },
-            "plugin/req-resp-modifier": {
-              "name": ["modifier-example"]
+            "workflow": {
+              "endpoint": "/__workflow/example",
+              "backend": [
+                {
+                  "url_pattern": "/__echo/example",
+                  "host": ["http://localhost:8082"]
+                }
+              ],
+              "extra_config": {
+                "plugin/req-resp-modifier": {
+                  "name": [
+                    "modifier-example"
+                  ]
+                }
+              }
             }
           }
         }
-      ]
+      ],
+      "extra_config": {
+        "plugin/req-resp-modifier": {
+          "name": [
+            "modifier-example"
+          ]
+        }
+      }
     }
   ],
   "extra_config": {

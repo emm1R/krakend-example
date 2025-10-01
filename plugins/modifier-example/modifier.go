@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -30,12 +29,13 @@ func (r registerer) RegisterModifiers(f func(
 }
 
 func (r registerer) request(
-	extra map[string]any,
+	_ map[string]any,
 ) func(any) (any, error) {
 	logger.Debug(fmt.Sprintf("[PLUGIN: %s] Modifier injected", r))
 
 	return func(input any) (any, error) {
-		return nil, errors.New("Modifier error")
+		logger.Info("modifier success!")
+		return nil, nil
 	}
 }
 
