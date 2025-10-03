@@ -6,6 +6,25 @@
   "echo_endpoint": true,
   "endpoints": [
     {
+      "endpoint": "/xml-example",
+      "method": "GET",
+      "output_encoding": "xml",
+      "backend": [
+        {
+          "url_pattern": "/",
+          "host": [ "http://unused-mandatory-field" ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            },
+            "plugin/http-client": {
+              "name": "client-example"
+            }
+          }
+        }
+      ]
+    },
+    {
       "endpoint": "/example",
       "method": "GET",
       "backend": [
