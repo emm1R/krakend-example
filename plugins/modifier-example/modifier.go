@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -68,7 +69,14 @@ func (r registerer) response(
 		}
 		logger.Info(string(body))
 
-		return input, nil
+		return responseWrapper{
+			isComplete: resp.IsComplete(),
+			metadata: metadataWrapper{
+				headers:    resp.Headers(),
+				statusCode: resp.StatusCode(),
+			},
+			io: bytes.NewReader(body),
+		}, nil
 	}
 }
 
