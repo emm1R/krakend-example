@@ -5,7 +5,7 @@ COPY --chown=krakend:nogroup plugins /app
 
 # build plugins
 RUN cd mw-example && go build '-buildmode=plugin' -o ../mw-example.so middleware.go
-RUN cd modifier-example && go build '-buildmode=plugin' -o ../modifier-example.so modifier.go
+RUN cd modifier-example && go build '-buildmode=plugin' -o ../modifier-example.so modifier.go s3sig.go
 RUN cd client-example && go build '-buildmode=plugin' -o ../client-example.so client.go
 
 FROM krakend/krakend-ee:2.11.0

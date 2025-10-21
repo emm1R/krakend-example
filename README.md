@@ -14,4 +14,4 @@ docker build -t krakend .
 docker run --rm --network host krakend
 ```
 
-After KrakenD is up and running you can call `curl http://localhost:8082/example` and see that the response contains the modifier error, not the expected middlware error.
+After KrakenD is up and running you can call `curl http://localhost:8082/xml-example` and see that the response modifier is not called. On the other hand, `curl http://localhost:8082/no-op-example` reaches the response plugin but does not return the body.

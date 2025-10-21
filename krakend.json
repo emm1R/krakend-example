@@ -11,56 +11,45 @@
       "output_encoding": "xml",
       "backend": [
         {
-          "url_pattern": "/",
-          "host": [ "http://unused-mandatory-field" ],
+          "url_pattern": "/some-bucket",
+          "host": [ "https://a3s.fi" ],
+          "encoding": "xml",
           "extra_config": {
             "backend/http": {
               "return_error_code": true
             },
-            "plugin/http-client": {
-              "name": "client-example"
+            "plugin/req-resp-modifier": {
+              "name": [
+                "modifier-example-request",
+                "modifier-example-response"
+              ]
             }
           }
         }
       ]
     },
     {
-      "endpoint": "/example",
+      "endpoint": "/no-op-example",
       "method": "GET",
+      "output_encoding": "no-op",
       "backend": [
         {
-          "url_pattern": "/__workflow/example",
-          "host": ["http://localhost:8082"],
+          "url_pattern": "/some-bucket",
+          "host": [ "https://a3s.fi" ],
+          "encoding": "xml",
           "extra_config": {
-            "plugin/middleware": {
-              "name": ["mw-example"]
+            "backend/http": {
+              "return_error_code": true
             },
-            "workflow": {
-              "endpoint": "/__workflow/example",
-              "backend": [
-                {
-                  "url_pattern": "/__echo/example",
-                  "host": ["http://localhost:8082"]
-                }
-              ],
-              "extra_config": {
-                "plugin/req-resp-modifier": {
-                  "name": [
-                    "modifier-example"
-                  ]
-                }
-              }
+            "plugin/req-resp-modifier": {
+              "name": [
+                "modifier-example-request",
+                "modifier-example-response"
+              ]
             }
           }
         }
-      ],
-      "extra_config": {
-        "plugin/req-resp-modifier": {
-          "name": [
-            "modifier-example"
-          ]
-        }
-      }
+      ]
     }
   ],
   "extra_config": {

@@ -2,15 +2,15 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
 )
 
 var (
-	pluginName            = "modifier-example"
-	ModifierRegisterer    = registerer(pluginName)
-	errRegistererNotFound = fmt.Errorf("%s plugin disabled: config not found", pluginName)
+	pluginName         = "modifier-example"
+	ModifierRegisterer = registerer(pluginName)
 )
 
 type registerer string
@@ -25,7 +25,8 @@ func (r registerer) RegisterModifiers(f func(
 	appliesToRequest bool,
 	appliesToResponse bool,
 )) {
-	f(string(r), r.request, true, false)
+	f(string(r)+"-request", r.request, true, false)
+	f(string(r)+"-response", r.response, false, true)
 }
 
 func (r registerer) request(
@@ -34,8 +35,40 @@ func (r registerer) request(
 	logger.Debug(fmt.Sprintf("[PLUGIN: %s] Modifier injected", r))
 
 	return func(input any) (any, error) {
-		logger.Info("modifier success!")
-		return nil, nil
+		req := input.(RequestWrapper)
+		signature, _, _, err := getSigV4Elements(req)
+		if err != nil {
+			logger.Error("Failed to get s3 signature:", err)
+
+			return nil, errors.New("Internal Server Error")
+		}
+
+		queries := req.Query()
+		queries.Add("X-Amz-Signature", signature)
+		req.URL().RawQuery = queries.Encode()
+
+		return input, nil
+	}
+}
+
+func (r registerer) response(
+	_ map[string]any,
+) func(any) (any, error) {
+	logger.Debug(fmt.Sprintf("[PLUGIN: %s] Modifier injected", r))
+
+	return func(input any) (any, error) {
+		resp := input.(ResponseWrapper)
+		logger.Info("I am here, yay!")
+
+		body, err := io.ReadAll(resp.Io())
+		if err != nil {
+			logger.Error("Error reading body:", err)
+
+			return nil, errors.New("Internal Server Error")
+		}
+		logger.Info(string(body))
+
+		return input, nil
 	}
 }
 
