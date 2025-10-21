@@ -31,12 +31,12 @@
     {
       "endpoint": "/no-op-example",
       "method": "GET",
-      "output_encoding": "no-op",
+      "output_encoding": "xml",
       "backend": [
         {
           "url_pattern": "/some-bucket",
           "host": [ "https://a3s.fi" ],
-          "encoding": "xml",
+          "encoding": "no-op",
           "extra_config": {
             "backend/http": {
               "return_error_code": true
