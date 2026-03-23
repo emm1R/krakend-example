@@ -1,16 +1,13 @@
-FROM krakend/krakend-ee:2.12.3
+FROM krakend/krakend-ee:2.13.0
 
 WORKDIR /opt/krakend
 
-ENV FC_ENABLE=1
-ENV FC_OUT=/tmp/krakend.json
-ENV FC_SETTINGS=/opt/krakend/config/settings
+COPY . .
 
-COPY krakend.tmpl /opt/krakend/config/
-COPY settings $FC_SETTINGS
+RUN krakend check --debug 3 -t --config krakend.json
 
 ENV USAGE_DISABLE=1
 
 COPY LICENSE LICENSE
 
-CMD [ "run", "-c", "/opt/krakend/config/krakend.tmpl" ]
+CMD [ "run", "-c", "/opt/krakend/krakend.json" ]

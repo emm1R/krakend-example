@@ -1,6 +1,6 @@
 # KrakenD API gateway and plugins
 
-A demonstration that a large number in a flexible configuration gets converted into exponential format in the json output file.
+A demonstration that `xml` encoding is a lot slower in returning a response than `no-op` encoding.
 
 ## Build
 
@@ -11,32 +11,7 @@ docker build -t krakend-example .
 ## Run
 
 ```bash
-docker run --rm --name krakend-example krakend-example
+docker run --rm --network host krakend-example
 ```
 
-In the container, the file `/tmp/krakend.json` will have the following content:
-
-```json
-{
-  "version": 3,
-  "debug_endpoint": true,
-  "echo_endpoint": true,
-  "host": ["http://localhost:8080/"],
-  "endpoints": [
-    {
-      "endpoint": "/example",
-      "method": "GET",
-      "extra_config": {
-        "proxy": {
-          "max_payload": 5.36870912e+09
-        }
-      },
-      "backend": [
-        {
-          "url_pattern": "/__debug/"
-        }
-      ]
-    }
-  ]
-}
-```
+After KrakenD is up and running you can call `time curl http://localhost:8080/xml > /dev/null` and see that command is a lot slower than calling `time curl http://localhost:8082/no-op > /dev/null`. For me, the request with `xml` encoding is roughly 10x slower.
